@@ -27,6 +27,7 @@ router.post('/signup', (req, res) => {
         gender: req.body.gender,
         password: hash,
         token: uid2(32),
+
       });
 
       newUser.save().then(newDoc => {
@@ -52,11 +53,43 @@ router.post('/signin', (req, res) => {
 
   User.findOne(searchCriteria).then(data => {
     if (data && bcrypt.compareSync(req.body.password, data.password)) {
-      res.json({ result: true, token: data.token, phone: data.phone, email: data.email });
+      res.json({ result: true, token: data.token, phone: data.phone });
     } else {
       res.json({ result: false, error: 'User not found or wrong password' });
     }
   }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+});
+
+router.put('/mood', (req, res) => {
+  if (!checkBody(req.body, [('mood' &&'music' && 'isAccompanied') || ('phone' && 'email') ])) {
+    return res.json({ result: false, error: 'Missing or empty fields' });
+  }
+
+  if(req.body.phone) {
+    User.updateOne(
+      { phone: req.body.phone },
+      { isAccompanied: req.body.isAccompanied, mood: req.body.mood, music: req.body.music}
+     ).then(() => {
+      
+        User.findOne({ phone: req.body.phone }).then(data => {
+          return res.json({ result: true, mood: data.mood, music: data.music, isAccompanied:data.isAccompanied });
+      }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+     
+     });
+    
+    } else if (req.body.email) {
+      User.updateOne(
+        { email: req.body.email },
+        { isAccompanied: req.body.isAccompanied, mood: req.body.mood, music: req.body.music}
+       ).then(() => {
+        
+          User.findOne({ email: req.body.email }).then(data => {
+            return res.json({ result: true, mood: data.mood, music: data.music, isAccompanied:data.isAccompanied });
+        }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+       
+       });
+ }
+ 
 });
 
 module.exports = router;
