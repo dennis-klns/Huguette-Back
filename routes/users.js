@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const uid2 = require('uid2');
 
 router.post('/signup', (req, res) => {
-  if (!checkBody(req.body, [('phone' || 'email') && 'password'])) {
+  if (!checkBody(req.body, ['lastname','firstname', 'phone', 'email', 'password', 'birthdate', 'gender'])) {
     res.json({ result: false, error: 'Missing or empty fields' });
     return;
   }
@@ -19,10 +19,15 @@ router.post('/signup', (req, res) => {
       const hash = bcrypt.hashSync(req.body.password, 10);
 
       const newUser = new User({
+        lastname: req.body.lastname,
+        firstname: req.body.firstname,
         email: req.body.email,
         phone: req.body.phone,
+        birthdate: req.body.birthdate,
+        gender: req.body.gender,
         password: hash,
         token: uid2(32),
+        type: 'passenger',
 
       });
 
@@ -37,15 +42,19 @@ router.post('/signup', (req, res) => {
 });
 
 
+
 router.post('/signin', (req, res) => {
-  if (!checkBody(req.body, ['phone', 'password'])) {
-    res.json({ result: false, error: 'Missing or empty fields' });
+  
+  if (!req.body.password || (!req.body.phone && !req.body.email)) {
+    res.json({ result: false, error: 'Email/Phone and password are required' });
     return;
   }
 
-  User.findOne({ phone: req.body.phone }).then(data => {
+  const searchCriteria = req.body.phone ? { phone: req.body.phone } : { email: req.body.email };
+
+  User.findOne(searchCriteria).then(data => {
     if (data && bcrypt.compareSync(req.body.password, data.password)) {
-      res.json({ result: true, phone: data.phone, email: data.email });
+      res.json({ result: true, token: data.token, phone: data.phone });
     } else {
       res.json({ result: false, error: 'User not found or wrong password' });
     }
