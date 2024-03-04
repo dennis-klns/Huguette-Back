@@ -31,6 +31,7 @@ const userSchema = mongoose.Schema({
   token: String,
   mood: Boolean,
   music: Boolean,
+  isAccompanied:Boolean,
   documents: documentSchema,
   adress: adressSchema,
   emergency: emergencySchema,
