@@ -8,22 +8,21 @@ const bcrypt = require('bcrypt');
 const uid2 = require('uid2');
 
 router.post('/signup', (req, res) => {
-  if (!checkBody(req.body, ['firstName', 'username', 'password'])) {
+  if (!checkBody(req.body, ['phone', 'email', 'password'])) {
     res.json({ result: false, error: 'Missing or empty fields' });
     return;
   }
 
   // Check if the user has not already been registered
-  User.findOne({ username: { $regex: new RegExp(req.body.username, 'i') } }).then(data => {
+  User.findOne({ phone: req.body.phone }).then(data => {
     if (data === null) {
       const hash = bcrypt.hashSync(req.body.password, 10);
 
       const newUser = new User({
-        firstName: req.body.firstName,
-        username: req.body.username,
+        email: req.body.email,
+        phone: req.body.phone,
         password: hash,
         token: uid2(32),
-        canBookmark: true,
       });
 
       newUser.save().then(newDoc => {
@@ -36,19 +35,20 @@ router.post('/signup', (req, res) => {
   });
 });
 
+
 router.post('/signin', (req, res) => {
-  if (!checkBody(req.body, ['username', 'password'])) {
+  if (!checkBody(req.body, ['phone', 'password'])) {
     res.json({ result: false, error: 'Missing or empty fields' });
     return;
   }
 
-  User.findOne({ username: { $regex: new RegExp(req.body.username, 'i') } }).then(data => {
-    if (bcrypt.compareSync(req.body.password, data.password)) {
-      res.json({ result: true, token: data.token, username: data.username, firstName: data.firstName });
+  User.findOne({ phone: req.body.phone }).then(data => {
+    if (data && bcrypt.compareSync(req.body.password, data.password)) {
+      res.json({ result: true, token: data.token, phone: data.phone });
     } else {
       res.json({ result: false, error: 'User not found or wrong password' });
     }
-  });
+  }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
 });
 
 module.exports = router;
