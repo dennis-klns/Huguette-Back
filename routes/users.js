@@ -27,6 +27,7 @@ router.post('/signup', (req, res) => {
         gender: req.body.gender,
         password: hash,
         token: uid2(32),
+        type: 'passenger',
 
       });
 

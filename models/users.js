@@ -20,7 +20,7 @@ const emergencySchema = mongoose.Schema({
 });
 
 const userSchema = mongoose.Schema({
-  name: String,
+  lastname: String,
   firstname: String,
   gender: String,
   type: String,
