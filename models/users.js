@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema({
   firstname: String,
   gender: String,
   type: String,
-  birthdate: Number,
+  birthdate: Date,
   email: String,
   phone: Number,
   password: String,
