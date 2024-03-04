@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema({
   documents: documentSchema,
   adress: adressSchema,
   emergency: emergencySchema,
-  averageNote: [number],
+  averageNote: [Number],
 });
 //
 const User = mongoose.model("users", userSchema);
