@@ -28,7 +28,7 @@ router.post('/signup', (req, res) => {
         password: hash,
         token: uid2(32),
         type: 'passenger',
-
+        isBanned: false,
       });
 
       newUser.save().then(newDoc => {
@@ -54,7 +54,7 @@ router.post('/signin', (req, res) => {
 
   User.findOne(searchCriteria).then(data => {
     if (data && bcrypt.compareSync(req.body.password, data.password)) {
-      res.json({ result: true, token: data.token, phone: data.phone });
+      res.json({ result: true, email: data.email, phone: data.phone });
     } else {
       res.json({ result: false, error: 'User not found or wrong password' });
     }
