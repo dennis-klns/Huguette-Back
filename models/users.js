@@ -1,22 +1,22 @@
 const mongoose = require("mongoose");
 
-const adressSchema = mongoose.Schema({
+const addressSchema = mongoose.Schema({
   street: String,
   city: String,
   zipcode: Number,
 });
 
-const documentSchema = mongoose.Schema({
-  carteid: String,
+const documentsSchema = mongoose.Schema({
+  idCard: String,
   driverLicense: String,
   isValidated: Boolean,
 });
 
 const emergencySchema = mongoose.Schema({
-  name: String,
+  lastname: String,
   firstname: String,
   phone: Number,
-  isBanned: Boolean,
+  emergencyMessage:String,
 });
 
 const userSchema = mongoose.Schema({
@@ -32,10 +32,11 @@ const userSchema = mongoose.Schema({
   mood: Boolean,
   music: Boolean,
   isAccompanied:Boolean,
-  documents: documentSchema,
-  adress: adressSchema,
+  documents: documentsSchema,
+  address: addressSchema,
   emergency: emergencySchema,
   averageNote: [Number],
+  isBanned: Boolean,
 });
 //
 const User = mongoose.model("users", userSchema);

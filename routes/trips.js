@@ -13,12 +13,12 @@ router.post('/', (req, res) => {
         const newTrip = new Trip({
             passenger: req.body.passenger,
             departure: {
-                longitudeD:req.body.longitudeD,
-                latitudeD:req.body.latitudeD,
+                longitude:req.body.longitudeD,
+                latitude:req.body.latitudeD,
             },
             arrival: {
-                longitudeA:req.body.longitudeA,
-                latitudeA:req.body.latitudeA,
+                longitude:req.body.longitudeA,
+                latitude:req.body.latitudeA,
             },
             date: new Date,
         });
@@ -36,7 +36,7 @@ router.post('/', (req, res) => {
   
       Trip.updateOne(
         { _id: req.body.tripId },
-        { cost: req.body.cost, departure: { longitudeD: req.body.longitudeD, latitudeD : req.body.latitudeD}}
+        { cost: req.body.cost, departure: { longitude: req.body.longitudeD, latitude : req.body.latitudeD}}
        ).then(() => {
         
           Trip.findOne({ _id: req.body.tripId }).then(data => {
