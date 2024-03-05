@@ -20,17 +20,18 @@ const emergencySchema = mongoose.Schema({
 });
 
 const userSchema = mongoose.Schema({
-  name: String,
+  lastname: String,
   firstname: String,
   gender: String,
   type: String,
-  birthdate: Number,
+  birthdate: Date,
   email: String,
   phone: Number,
   password: String,
   token: String,
   mood: Boolean,
   music: Boolean,
+  isAccompanied:Boolean,
   documents: documentSchema,
   adress: adressSchema,
   emergency: emergencySchema,
