@@ -93,23 +93,23 @@ router.put('/mood', (req, res) => {
  
 });
 
-router.put('/emergencymessage', (req, res) => {
-  if (!checkBody(req.body, ['mood','music' ])) {
-    return res.json({ result: false, error: 'Missing or empty fields' });
-  }
+// router.put('/emergencymessage', (req, res) => {
+//   if (!checkBody(req.body, ['mood','music' ])) {
+//     return res.json({ result: false, error: 'Missing or empty fields' });
+//   }
 
-  const searchCriteria = req.body.phone ? { phone: req.body.phone } : { email: req.body.email };
+//   const searchCriteria = req.body.phone ? { phone: req.body.phone } : { email: req.body.email };
 
-    User.updateOne(
-      { phone: req.body.phone },
-      { isAccompanied: req.body.isAccompanied, mood: req.body.mood, music: req.body.music}
-     ).then(() => {
+//     User.updateOne(
+//       { phone: req.body.phone },
+//       { isAccompanied: req.body.isAccompanied, mood: req.body.mood, music: req.body.music}
+//      ).then(() => {
       
-        User.findOne({ phone: req.body.phone }).then(data => {
-          return res.json({ result: true, mood: data.mood, music: data.music, isAccompanied:data.isAccompanied });
-      }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+//         User.findOne({ phone: req.body.phone }).then(data => {
+//           return res.json({ result: true, mood: data.mood, music: data.music, isAccompanied:data.isAccompanied });
+//       }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
      
-     });
+//      });
 
 
 module.exports = router;
