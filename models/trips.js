@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
+const positionSchema = mongoose.Schema({
+  latitude: String,
+  longitude: String,
+});
 
 const tripSchema = mongoose.Schema({
   driver: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   passenger: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
-  departure: {latitudeD : Number,longitudeD : Number},
-  arrival: {latitudeA : Number, longitudeA : Number},
+  departure: positionSchema,
+  arrival: positionSchema,
   date: Date,
   arrivalHour: Date,
   departureHour: Date,
