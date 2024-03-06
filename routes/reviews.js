@@ -3,6 +3,7 @@ var router = express.Router();
 
 require('../models/connection');
 const Review = require('../models/reviews');
+const User = require('../models/users');
 const { checkBody } = require('../modules/checkBody');
 
 router.post('/', (req, res) => {
@@ -20,38 +21,7 @@ router.post('/', (req, res) => {
 
   });
 
-router.put('/passenger', (req, res) => {
-    if (!checkBody(req.body, [ 'tripId', 'noteByPassenger'])) {
-      res.json({ result: false, error: 'Missing or empty fields' });
-      return;
-    }  
 
-    if (!req.body.commentByPassenger) {
-        Review.updateOne(
-        { trip: req.body.tripId },
-        { noteByPassenger: req.body.noteByPassenger}
-       ).then(() => {
-        
-          Review.findOne({ trip: req.body.tripId }).then(data => {
-            return res.json({ review: data});
-        }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
-       
-       });
-    } else {
-        
-        Review.updateOne(
-            { trip: req.body.tripId },
-            { noteByPassenger: req.body.noteByPassenger, commentByPassenger: req.body.commentByPassenger}
-           ).then(() => {
-            
-              Review.findOne({ trip: req.body.tripId }).then(data => {
-                return res.json({ review:data});
-            }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
-           
-           });
-    }
-      
-  });
 
 // router.put('/passenger', (req, res) => {
 //     if (!checkBody(req.body, [ 'tripId', 'noteByPassenger'])) {

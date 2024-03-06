@@ -97,6 +97,24 @@ router.put('/emergencymessage', (req, res) => {
 
   });
 
+  router.put('/drivernote', (req, res) => {
+    if (!checkBody(req.body, ['note','token' ])) {
+      return res.json({ result: false, error: 'Missing or empty fields' });
+    }
+  
+    User.updateOne(
+      { token: req.body.token },
+      { $push: {averageNote: req.body.note}}
+     ).then(() => {
+      
+        User.findOne({ token: req.body.token }).then(data => {
+          return res.json({ result: true, emergency: data.emergency });
+      }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+     
+     });
+  
+    });
+
   router.put('/emergencycontact', (req, res) => {
     if (!checkBody(req.body, ['emergencyLastname', 'emergencyFirstname','emergencyPhone','token' ])) {
       return res.json({ result: false, error: 'Missing or empty fields' });
@@ -113,6 +131,15 @@ router.put('/emergencymessage', (req, res) => {
      
      });
   
-    });
+  });
+
+  router.get('/emergencyinfos/:token', function(req, res) {
+    User.findOne({token: req.params.token}).then(data => {
+        return res.json({ emergencyInfos: data.emergency});
+       });
+  });
+
+
+
 
 module.exports = router;
