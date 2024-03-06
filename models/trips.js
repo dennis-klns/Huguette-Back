@@ -18,6 +18,7 @@ const tripSchema = mongoose.Schema({
   inProgress: Boolean,
   completed: Boolean,
   cost: Number,
+  cancelledByPassenger: Boolean,
 });
 
 const Trip = mongoose.model('trips', tripSchema);

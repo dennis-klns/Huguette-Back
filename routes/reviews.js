@@ -21,6 +21,26 @@ router.post('/', (req, res) => {
 
   });
 
+router.put('/passenger', (req, res) => {
+
+    if (!checkBody(req.body, [ 'tripId', 'noteByPassenger'])) {
+      res.json({ result: false, error: 'Missing or empty fields' });
+      return;
+    }  
+
+    const modificationCriteria = req.body.commentByPassenger ? { noteByPassenger: req.body.noteByPassenger, commentByPassenger: req.body.commentByPassenger} : { noteByPassenger: req.body.noteByPassenger};
+
+    Review.updateOne(
+        { trip: req.body.tripId },
+        modificationCriteria
+        ).then(() => {
+          Review.findOne({ trip: req.body.tripId }).then(data => {
+            return res.json({ review: data});
+          })
+        }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+      
+  });
+
 
 
 // router.put('/passenger', (req, res) => {
@@ -43,7 +63,7 @@ router.post('/', (req, res) => {
       
 //   });
 
-  router.put('/complaintpassenger', (req, res) => {
+  router.put('/complaintPassenger', (req, res) => {
     if (!checkBody(req.body, ['complaintType', 'details', 'tripId'])) {
       return res.json({ result: false, error: 'Missing or empty fields' });
     }
