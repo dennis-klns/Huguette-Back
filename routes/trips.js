@@ -39,17 +39,17 @@ router.post('/', (req, res) => {
   });
 
   router.put('/costPosition', (req, res) => {
-    if (!checkBody(req.body, ['cost', 'tripId'])) {
+    if (!checkBody(req.body, [/*'cost',*/ 'tripId'])) {
       return res.json({ result: false, error: 'Missing or empty fields' });
     }
   
       Trip.updateOne(
         { _id: req.body.tripId },
-        { cost: req.body.cost, departure: { longitude: req.body.longitudeD, latitude : req.body.latitudeD}}
+        { /*cost: req.body.cost,*/ departure: { longitude: req.body.longitudeD, latitude : req.body.latitudeD}}
        ).then(() => {
         
           Trip.findOne({ _id: req.body.tripId }).then(data => {
-            return res.json({ cost: data.cost, departure: data.departure});
+            return res.json({ /*cost: data.cost,*/ departure: data.departure});
         }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
        
        });
