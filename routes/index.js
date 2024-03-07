@@ -18,16 +18,18 @@ router.post('/upload', async (req, res) => {
       return res.status(400).json({ result: false, message: "Aucun fichier n'a été téléchargé." });
     }
     const photoPath = `./tmp/${uniqid()}.jpg`;
-    await req.files.photoFromFront.mv(photoPath); 
+    const reultMove = await req.files.photoFromFront.mv(photoPath); 
 
+    if (!reultMove) {
     const resultCloudinary = await cloudinary.uploader.upload(photoPath);
     fs.unlinkSync(photoPath); 
-    res.json({ result: true, url: resultCloudinary.secure_url });
+    res.json({ result: true, url: resultCloudinary.secure_url });}
   } catch (error) {
     console.error(error);
     res.status(500).json({ result: false, message: 'Erreur lors du traitement de la demande.', error: error.message });
   }
-});
+
+})
 
 router.post('/uploadLibrairie', async (req, res) => {
   try {
