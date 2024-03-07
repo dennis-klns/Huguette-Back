@@ -45,7 +45,7 @@ router.post('/', (req, res) => {
   
       Trip.updateOne(
         { _id: req.body.tripId },
-        { /*cost: req.body.cost,*/ departure: { longitude: req.body.longitudeD, latitude : req.body.latitudeD}}
+        { /*cost: req.body.cost,*/ departure: { longitude: req.body.longitudeD, latitude : req.body.latitudeD, completeAddress : req.body.completeAddressD}}
        ).then(() => {
         
           Trip.findOne({ _id: req.body.tripId }).then(data => {
