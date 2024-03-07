@@ -10,10 +10,14 @@ var usersRouter = require("./routes/users");
 var tripsRouter = require("./routes/trips");
 var reviewsRouter = require("./routes/reviews");
 
+
 var app = express();
 
 const cors = require("cors");
 app.use(cors());
+
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 
 app.use(logger("dev"));
 app.use(express.json());
