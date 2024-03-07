@@ -17,7 +17,7 @@ router.post('/upload', async (req, res) => {
     if (!req.files.photoFromFront) {
       return res.status(400).json({ result: false, message: "Aucun fichier n'a été téléchargé." });
     }
-    const photoPath = `./tmp/${uniqid()}.jpg`;
+    const photoPath = `/tmp/${uniqid()}.jpg`;
     const reultMove = await req.files.photoFromFront.mv(photoPath); 
 
     if (!reultMove) {
@@ -36,7 +36,7 @@ router.post('/uploadLibrairie', async (req, res) => {
     if (!req.files.photoFromLibrairie) {
       return res.status(400).json({ result: false, message: "Aucun fichier n'a été téléchargé." });
     }
-    const photoPath = `./tmp/${uniqid()}.jpg`;
+    const photoPath = `/tmp/${uniqid()}.jpg`;
     const resultMove = await req.files.photoFromLibrairie.mv(photoPath); 
 
     if (!resultMove) {
