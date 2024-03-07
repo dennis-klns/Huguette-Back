@@ -21,6 +21,7 @@ router.post('/', (req, res) => {
                 latitude:req.body.latitudeA,
             },
             date: new Date,
+            cancelled:false,
         });
   
         newTrip.save().then(newDoc => {
@@ -29,7 +30,7 @@ router.post('/', (req, res) => {
       
   });
 
-  router.put('/costposition', (req, res) => {
+  router.put('/costPosition', (req, res) => {
     if (!checkBody(req.body, ['cost', 'tripId'])) {
       return res.json({ result: false, error: 'Missing or empty fields' });
     }
@@ -48,7 +49,7 @@ router.post('/', (req, res) => {
   });
 
 
-  router.put('/drivervalidation', (req, res) => {
+  router.put('/driverValidation', (req, res) => {
     if (!checkBody(req.body, ['driverId', 'tripId'])) {
       return res.json({ result: false, error: 'Missing or empty fields' });
     }
@@ -59,7 +60,7 @@ router.post('/', (req, res) => {
        ).then(() => {
         
           Trip.findOne({ _id: req.body.tripId }).populate('driver').then(data => {
-            return res.json({ trip: data.driver});
+            return res.json({ trip: data});
         }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
        
        });
@@ -70,6 +71,25 @@ router.post('/', (req, res) => {
     Trip.findById(req.params.tripId).populate('driver passenger').then(data => {
         return res.json({ trip: data});
        });
+  });
+
+
+  router.put('/cancelationPassenger', (req, res) => {
+    if (!checkBody(req.body, ['tripId'])) {
+      return res.json({ result: false, error: 'Missing or empty fields' });
+    }
+  
+      Trip.updateOne(
+        { _id: req.body.tripId },
+        { cancelledByPassenger: true}
+       ).then(() => {
+        
+          Trip.findOne({ _id: req.body.tripId }).populate('passenger').then(data => {
+            return res.json({ trip: data});
+        }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+       
+       });
+      
   });
 
 module.exports = router;
