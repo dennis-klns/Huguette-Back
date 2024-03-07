@@ -4,7 +4,6 @@ var router = express.Router();
 const cloudinary = require('cloudinary').v2;
 const uniqid = require('uniqid');
 const fs = require('fs');
-const path = require('path');
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -13,31 +12,24 @@ router.get('/', function(req, res, next) {
 
 router.post('/upload', async (req, res) => {
   try {
+
+    
     if (!req.files.photoFromFront) {
       return res.status(400).json({ result: false, message: "Aucun fichier n'a été téléchargé." });
     }
-
-    // Créez le chemin complet du dossier 'tmp'
-    const tmpFolderPath = path.join(__dirname, 'tmp');
-    
-    // Vérifiez si le dossier 'tmp' existe, sinon créez-le
-    if (!fs.existsSync(tmpFolderPath)) {
-      fs.mkdirSync(tmpFolderPath);
-    }
-
-    const photoPath = path.join(tmpFolderPath, `${uniqid()}.jpg`);
-    const reultMove = await req.files.photoFromFront.mv(photoPath);
+    const photoPath = `./tmp/${uniqid()}.jpg`;
+    const reultMove = await req.files.photoFromFront.mv(photoPath); 
 
     if (!reultMove) {
-      const resultCloudinary = await cloudinary.uploader.upload(photoPath);
-      fs.unlinkSync(photoPath);
-      res.json({ result: true, url: resultCloudinary.secure_url });
-    }
+    const resultCloudinary = await cloudinary.uploader.upload(photoPath);
+    fs.unlinkSync(photoPath); 
+    res.json({ result: true, url: resultCloudinary.secure_url });}
   } catch (error) {
     console.error(error);
     res.status(500).json({ result: false, message: 'Erreur lors du traitement de la demande.', error: error.message });
   }
-});
+
+})
 
 router.post('/uploadLibrairie', async (req, res) => {
   try {
