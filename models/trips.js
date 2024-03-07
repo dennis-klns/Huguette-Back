@@ -1,13 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const positionSchema = mongoose.Schema({
+  completeAddress: String,
   latitude: String,
   longitude: String,
 });
 
 const tripSchema = mongoose.Schema({
-  driver: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
-  passenger: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+  driver: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  passenger: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   departure: positionSchema,
   arrival: positionSchema,
   date: Date,
@@ -21,6 +22,6 @@ const tripSchema = mongoose.Schema({
   cancelledByPassenger: Boolean,
 });
 
-const Trip = mongoose.model('trips', tripSchema);
+const Trip = mongoose.model("trips", tripSchema);
 
 module.exports = Trip;
