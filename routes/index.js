@@ -4,6 +4,7 @@ var router = express.Router();
 const cloudinary = require('cloudinary').v2;
 const uniqid = require('uniqid');
 const fs = require('fs');
+const path = require('path');
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
