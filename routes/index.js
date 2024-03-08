@@ -26,11 +26,11 @@ router.post('/upload/:token', async (req, res) => {
     const resultCloudinary = await cloudinary.uploader.upload(photoPath);
     fs.unlinkSync(photoPath); 
 
-      User.updateOne({token: req.params.token},
+      await User.updateOne({token: req.params.token},
         {
          picture: resultCloudinary.secure_url
 
-        }).then((data) => {console.log(data)})
+        })
 
     res.json({ result: true, url: resultCloudinary.secure_url });}
   } catch (error) {
