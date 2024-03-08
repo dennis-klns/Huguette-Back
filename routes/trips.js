@@ -91,7 +91,7 @@ router.put("/driverValidation", (req, res) => {
       Trip.findOne({ _id: req.body.tripId })
         .populate("driver")
         .then((data) => {
-          return res.json({ trip: data });
+          return res.json({ result: true, trip: data });
         })
         .catch((error) =>
           res.json({ result: false, error: "Database error", details: error })
@@ -104,7 +104,7 @@ router.get("/:tripId", function (req, res) {
   Trip.findById(req.params.tripId)
     .populate("driver passenger")
     .then((data) => {
-      return res.json({ trip: data });
+      return res.json({ result: true, trip: data });
     });
 });
 
@@ -118,7 +118,7 @@ router.put("/cancelationPassenger", (req, res) => {
       Trip.findOne({ _id: req.body.tripId })
         .populate("passenger")
         .then((data) => {
-          return res.json({ trip: data });
+          return res.json({ result:true, trip: data });
         })
         .catch((error) =>
           res.json({ result: false, error: "Database error", details: error })
