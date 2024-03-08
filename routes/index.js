@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+require('../models/connection');
+const User = require('../models/users');
 const cloudinary = require('cloudinary').v2;
 const uniqid = require('uniqid');
 const fs = require('fs');
@@ -10,7 +12,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.post('/upload', async (req, res) => {
+router.post('/upload/:token', async (req, res) => {
   try {
 
     
@@ -23,6 +25,13 @@ router.post('/upload', async (req, res) => {
     if (!reultMove) {
     const resultCloudinary = await cloudinary.uploader.upload(photoPath);
     fs.unlinkSync(photoPath); 
+
+      User.updateOne({token: req.params.token},
+        {
+         picture: resultCloudinary.secure_url,
+
+        })
+
     res.json({ result: true, url: resultCloudinary.secure_url });}
   } catch (error) {
     console.error(error);
@@ -52,5 +61,28 @@ router.post('/uploadLibrairie', async (req, res) => {
     res.status(500).json({ result: false, message: 'Erreur lors du traitement de la demande.', error: error.message });
   }
 });
+
+
+
+// router.post('/upload', async (req, res) => {
+//   try {
+
+    
+//     if (!req.files.photoFromFront) {
+//       return res.status(400).json({ result: false, message: "Aucun fichier n'a été téléchargé." });
+//     }
+//     const photoPath = `/tmp/${uniqid()}.jpg`;
+//     const reultMove = await req.files.photoFromFront.mv(photoPath); 
+
+//     if (!reultMove) {
+//     const resultCloudinary = await cloudinary.uploader.upload(photoPath);
+//     fs.unlinkSync(photoPath); 
+//     res.json({ result: true, url: resultCloudinary.secure_url });}
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ result: false, message: 'Erreur lors du traitement de la demande.', error: error.message });
+//   }
+
+// })
 
 module.exports = router;
