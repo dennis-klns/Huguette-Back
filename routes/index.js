@@ -28,9 +28,9 @@ router.post('/upload/:token', async (req, res) => {
 
       User.updateOne({token: req.params.token},
         {
-         picture: resultCloudinary.secure_url,
+         picture: resultCloudinary.secure_url
 
-        })
+        }).then((data) => {console.log(data)})
 
     res.json({ result: true, url: resultCloudinary.secure_url });}
   } catch (error) {
