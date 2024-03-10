@@ -143,7 +143,7 @@ router.put("/driverValidation", (req, res) => {
   User.findOne({ token: req.body.tokenDriver })
   .then((data) => {
 
-  Trip.updateOne({ _id: req.body.tripId }, { driver: data._id }).then(
+  Trip.updateOne({ _id: req.body.tripId }, { driver: data._id , passengerAccepts: true}).then(
     () => {
       Trip.findOne({ _id: req.body.tripId })
         .populate("driver")
