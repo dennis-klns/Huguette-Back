@@ -136,11 +136,14 @@ router.post("/", (req, res) => {
 });
 
 router.put("/driverValidation", (req, res) => {
-  if (!checkBody(req.body, ["driverToken", "tripId"])) {
+  if (!checkBody(req.body, ["tokenDriver", "tripId"])) {
     return res.json({ result: false, error: "Missing or empty fields" });
   }
 
-  Trip.updateOne({ _id: req.body.tripId }, { driver: req.body.driverId }).then(
+  User.findOne({ token: req.body.tokenDriver })
+  .then((data) => {
+
+  Trip.updateOne({ _id: req.body.tripId }, { driver: data._id }).then(
     () => {
       Trip.findOne({ _id: req.body.tripId })
         .populate("driver")
@@ -152,6 +155,9 @@ router.put("/driverValidation", (req, res) => {
         );
     }
   );
+
+  })
+
 });
 
 router.get("/:tripId", function (req, res) {
