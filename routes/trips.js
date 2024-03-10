@@ -136,7 +136,7 @@ router.post("/", (req, res) => {
 });
 
 router.put("/driverValidation", (req, res) => {
-  if (!checkBody(req.body, ["driverId", "tripId"])) {
+  if (!checkBody(req.body, ["driverToken", "tripId"])) {
     return res.json({ result: false, error: "Missing or empty fields" });
   }
 
