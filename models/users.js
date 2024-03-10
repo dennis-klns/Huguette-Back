@@ -26,6 +26,7 @@ const userSchema = mongoose.Schema({
   type: String,
   birthdate: Date,
   email: String,
+  picture: String,
   phone: Number,
   password: String,
   token: String,

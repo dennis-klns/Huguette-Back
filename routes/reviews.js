@@ -35,7 +35,7 @@ router.put('/passenger', (req, res) => {
         modificationCriteria
         ).then(() => {
           Review.findOne({ trip: req.body.tripId }).then(data => {
-            return res.json({ review: data});
+            return res.json({ result: true, review: data});
           })
         }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
       

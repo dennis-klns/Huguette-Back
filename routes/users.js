@@ -54,7 +54,7 @@ router.post('/signIn', (req, res) => {
 
   User.findOne(searchCriteria).then(data => {
     if (data && bcrypt.compareSync(req.body.password, data.password)) {
-      res.json({ result: true, token: data.token, firstname: data.firstname });
+      res.json({ result: true, token: data.token, firstname: data.firstname, lastname: data.lastname });
     } else {
       res.json({ result: false, error: 'User not found or wrong password' });
     }
@@ -135,7 +135,7 @@ router.put('/emergencyMessage', (req, res) => {
 
   router.get('/emergencyInfos/:token', function(req, res) {
     User.findOne({token: req.params.token}).then(data => {
-        return res.json({ emergencyInfos: data.emergency});
+        return res.json({ resukt: true, emergencyInfos: data.emergency});
        });
   });
 
