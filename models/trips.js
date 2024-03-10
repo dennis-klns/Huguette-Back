@@ -19,6 +19,8 @@ const tripSchema = mongoose.Schema({
   inProgress: Boolean,
   completed: Boolean,
   cost: Number,
+  estimatedDuration: String,
+  distance: String,
   cancelledByPassenger: Boolean,
 });
 
