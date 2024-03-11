@@ -163,11 +163,40 @@ router.put("/costPosition", (req, res) => {
         ).then(() => {
           Trip.findOne({ _id: req.body.tripId })
           .then((data) => {
-          return res.json({
-          /*cost: data.cost,*/ result: true,
-          trip: data,
-          });
+            const fetchData = async () => {
+              try {
+                const responseT = await axios.get(
+                  `https://maps.googleapis.com/maps/api/directions/json?origin=${data.departure.completeAddress}&destination=${data.arrival.completeAddress}&key=${googleApiKey}`
+                );
+                Trip.updateOne(
+                  { _id: req.body.tripId },
+                  {
+                    distance: responseT.data.routes[0].legs[0].distance.text,
+                    estimatedDuration: responseT.data.routes[0].legs[0].duration.text,
+                    estimatedDurationValue:responseT.data.routes[0].legs[0].duration.value,
+                  }
+                ).then(() => {
+                  Trip.findOne({ _id: req.body.tripId })
+                  .then((data) => {
+                  return res.json({
+                  result: true,
+                  trip: data,
+                  });
           })
+                })
+                console.log("API Duration:", responseT.data.routes[0].legs[0].duration.text);
+                console.log("API Distance:", responseT.data.routes[0].legs[0].distance.text);
+              } catch (error) {
+                console.error("Error fetching directions:", error);
+              }
+            };
+        
+            fetchData();
+            
+          })
+          .catch((error) =>
+            res.json({ result: false, error: "Database error1", details: error })
+          );
           });
       
 
