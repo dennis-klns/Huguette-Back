@@ -142,7 +142,7 @@ router.put('/emergencyMessage', (req, res) => {
      ).then(() => {
       
         User.findOne({ token: req.body.token }).then(data => {
-          return res.json({ result: true, emergency: data.emergency });
+          return res.json({ result: true, driver: data });
       }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
      
      });

@@ -20,6 +20,7 @@ const tripSchema = mongoose.Schema({
   completed: Boolean,
   cost: Number,
   estimatedDuration: String,
+  estimatedDurationValue: String,
   distance: String,
   cancelledByPassenger: Boolean,
 });
