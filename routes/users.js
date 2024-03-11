@@ -113,23 +113,23 @@ router.put('/moodPassenger', (req, res) => {
  
 });
 
-router.put('/emergencyMessage', (req, res) => {
-  if (!checkBody(req.body, ['emergencyMessage','token' ])) {
-    return res.json({ result: false, error: 'Missing or empty fields' });
-  }
+// router.put('/emergencyMessage', (req, res) => {
+//   if (!checkBody(req.body, ['emergencyMessage','token' ])) {
+//     return res.json({ result: false, error: 'Missing or empty fields' });
+//   }
 
-  User.updateOne(
-    { token: req.body.token },
-    { $set: {'emergency.emergencyMessage': req.body.emergencyMessage}}
-   ).then(() => {
+//   User.updateOne(
+//     { token: req.body.token },
+//     { $set: {'emergency.emergencyMessage': req.body.emergencyMessage}}
+//    ).then(() => {
     
-      User.findOne({ token: req.body.token }).then(data => {
-        return res.json({ result: true, emergency: data.emergency });
-    }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+//       User.findOne({ token: req.body.token }).then(data => {
+//         return res.json({ result: true, emergency: data.emergency });
+//     }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
    
-   });
+//    });
 
-  });
+//   });
 
   router.put('/driverNote', (req, res) => {
     if (!checkBody(req.body, ['note','token' ])) {
