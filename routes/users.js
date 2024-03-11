@@ -169,7 +169,7 @@ router.put('/emergencyMessage', (req, res) => {
 
   router.get('/emergencyInfos/:token', function(req, res) {
     User.findOne({token: req.params.token}).then(data => {
-        return res.json({ resukt: true, emergencyInfos: data.emergency});
+        return res.json({ result: true, emergencyInfos: data.emergency});
        });
   });
 
