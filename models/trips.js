@@ -23,6 +23,7 @@ const tripSchema = mongoose.Schema({
   estimatedDurationValue: String,
   distance: String,
   cancelledByPassenger: Boolean,
+  polyline:String,
 });
 
 const Trip = mongoose.model("trips", tripSchema);

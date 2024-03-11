@@ -82,6 +82,7 @@ router.post("/", (req, res) => {
                                 distance: responseT.data.routes[0].legs[0].distance.text,
                                 estimatedDuration: responseT.data.routes[0].legs[0].duration.text,
                                 estimatedDurationValue:responseT.data.routes[0].legs[0].duration.value,
+                                polyline:responseT.data.routes[0].overview_polyline.points,
                               }
                             ).then(() => {
                               Trip.findOne({ _id: newDoc._id })
@@ -174,6 +175,7 @@ router.put("/costPosition", (req, res) => {
                     distance: responseT.data.routes[0].legs[0].distance.text,
                     estimatedDuration: responseT.data.routes[0].legs[0].duration.text,
                     estimatedDurationValue:responseT.data.routes[0].legs[0].duration.value,
+                    polyline:responseT.data.routes[0].overview_polyline.points,
                   }
                 ).then(() => {
                   Trip.findOne({ _id: req.body.tripId })
