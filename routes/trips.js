@@ -136,6 +136,51 @@ router.post("/", (req, res) => {
  
 });
 
+router.put("/costPosition", (req, res) => {
+  if (!checkBody(req.body, [ "tripId", 'longitudeD', 'latitudeD'])) {
+    return res.json({ result: false, error: "Missing or empty fields" });
+  }
+  const fetchAddressFromCoordinatesBis = async () => {
+
+    try {
+      const responseD = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.body.latitudeD},${req.body.longitudeD}&key=${googleApiKey}`
+      );
+      const dataD = await responseD.json();
+      // console.log("dataD", dataD);
+      if (dataD.status === "OK" && dataD.results.length > 0) {
+        const departureAddress = dataD.results[0].formatted_address;
+        console.log(departureAddress);
+        Trip.updateOne(
+          { _id: req.body.tripId },
+          {
+             departure: {
+              longitude: req.body.longitudeD,
+              latitude: req.body.latitudeD,
+              completeAddress: departureAddress,
+              },
+          }
+        ).then(() => {
+          Trip.findOne({ _id: req.body.tripId })
+          .then((data) => {
+          return res.json({
+          /*cost: data.cost,*/ result: true,
+          trip: data,
+          });
+          })
+          });
+      
+
+      }
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'adresse:", error);
+      }
+  }
+          
+    fetchAddressFromCoordinatesBis();
+});
+                
+
 router.put("/driverValidation", (req, res) => {
   if (!checkBody(req.body, ["tokenDriver", "tripId"])) {
     return res.json({ result: false, error: "Missing or empty fields" });
@@ -161,49 +206,6 @@ router.put("/driverValidation", (req, res) => {
 
 });
 
-// router.put("/costPosition", (req, res) => {
-//   if (!checkBody(req.body, [ "tripId", 'longitudeD', 'latitudeD'])) {
-//     return res.json({ result: false, error: "Missing or empty fields" });
-//   }
-//   const fetchAddressFromCoordinatesBis = async () => {
-
-//   try {
-//   const responseD = await fetch(
-//     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.body.latitudeD},${req.body.longitudeD}&key=${googleApiKey}`
-//   );
-//   const dataD = await responseD.json();
-//   // console.log("dataD", dataD);
-//   if (dataD.status === "OK" && dataD.results.length > 0) {
-//     const departureAddress = dataD.results[0].formatted_address;
-//     console.log(departureAddress);
-//     Trip.updateOne(
-//       { _id: req.body.tripId },
-//       {
-//          departure: {
-//           longitude: req.body.longitudeD,
-//           latitude: req.body.latitudeD,
-//           completeAddress: departureAddress,
-//         },
-//       }
-//     ).then(() => {
-//       Trip.findOne({ _id: req.body.tripId })
-//       .populate("driver")
-//       .then((data) => {
-//         return res.json({ result: true, trip: data });
-//       })
-//       .catch((error) =>
-//         res.json({ result: false, error: "Database error", details: error })
-//       );
-//     })
-  
-//   }
-
-// }} catch (error) {
-//   console.error("Erreur lors de la récupération de l'adresse:", error);
-// }
-
-//       fetchAddressFromCoordinatesBis();
-//         })
         
 
 router.get("/:tripId", function (req, res) {
