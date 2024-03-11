@@ -51,6 +51,7 @@ router.post('/uploadLibrairie', async (req, res) => {
     if (!resultMove) {
       const resultCloudinary = await cloudinary.uploader.upload(photoPath);
       fs.unlinkSync(photoPath); 
+      await User.updateOne({ token: req.body.token }, { $set: { picture: resultCloudinary.secure_url } });
       res.json({ result: true, url: resultCloudinary.secure_url });
     } else {
       console.log(resultMove)
