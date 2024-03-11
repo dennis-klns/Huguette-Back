@@ -150,13 +150,13 @@ router.put('/emergencyMessage', (req, res) => {
     });
 
   router.put('/emergencyContact', (req, res) => {
-    if (!checkBody(req.body, ['emergencyLastname', 'emergencyFirstname','emergencyPhone','token' ])) {
+    if (!checkBody(req.body, ['emergencyLastname', 'emergencyFirstname','emergencyPhone','token', 'emergencyMessage' ])) {
       return res.json({ result: false, error: 'Missing or empty fields' });
     }
   
     User.updateOne(
       { token: req.body.token },
-      { $set: {'emergency.lastname': req.body.emergencyLastname, 'emergency.firstname': req.body.emergencyFirstname, 'emergency.phone': req.body.emergencyPhone,}}
+      { $set: {'emergency.lastname': req.body.emergencyLastname, 'emergency.firstname': req.body.emergencyFirstname, 'emergency.phone': req.body.emergencyPhone, 'emergency.emergencyMessage':req.body.emergencyMessage}}
      ).then(() => {
       
         User.findOne({ token: req.body.token }).then(data => {
