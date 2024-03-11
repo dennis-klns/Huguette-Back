@@ -266,4 +266,14 @@ router.put("/cancelationPassenger", (req, res) => {
   );
 });
 
+
+router.delete("/", function (req, res) {
+  Trip.deleteMany().then(() => {
+  
+    Trip.find().then(data => {
+      return res.json({ result:true, trip: data });
+    });
+  
+  });
+});
 module.exports = router;
