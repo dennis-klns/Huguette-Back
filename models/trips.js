@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const positionSchema = mongoose.Schema({
   completeAddress: String,
-  latitude: String,
-  longitude: String,
+  latitude: Number,
+  longitude: Number,
 });
 
 const tripSchema = mongoose.Schema({
@@ -23,7 +23,7 @@ const tripSchema = mongoose.Schema({
   estimatedDurationValue: String,
   distance: String,
   cancelledByPassenger: Boolean,
-  polyline:String,
+  polyline: String,
 });
 
 const Trip = mongoose.model("trips", tripSchema);
