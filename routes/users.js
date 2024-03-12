@@ -102,7 +102,7 @@ router.put('/moodPassenger', (req, res) => {
 
     User.updateOne(
       { token: req.body.token },
-      { $set: {'isAccompanied': 'req.body.isAccompanied', 'mood': 'req.body.mood', 'music': 'req.body.music'}}
+      { $set: {'isAccompanied': req.body.isAccompanied, 'mood': req.body.mood, 'music': req.body.music}}
      ).then(() => {
       
         User.findOne({ token: req.body.token }).then(data => {
