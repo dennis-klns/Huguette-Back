@@ -6,6 +6,8 @@ const User = require('../models/users');
 const { checkBody } = require('../modules/checkBody');
 const bcrypt = require('bcrypt');
 const uid2 = require('uid2');
+const googleApiKey = process.env.GOOGLE_API_KEY;
+const axios = require("axios");
 
 router.post('/signUp', (req, res) => {
   if (!checkBody(req.body, ['lastname','firstname', 'phone', 'email', 'password', 'birthdate', 'gender'])) {
@@ -202,8 +204,13 @@ router.put('/moodPassenger', (req, res) => {
           User.updateOne(
             { token: req.body.tokenDriver },
             { $push: { averageNote: req.body.noteByPassenger } }
-            ).then((data) => {
-              return res.json({result: true, message: "Note ajoutée avec succès", report: data})
+            ).then(() => {
+
+              User.findOne({ token: req.body.tokenDriver }).then(data => {
+                return res.json({ result: true, driver: data });
+
+            }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+
             }).catch(error => res.json({ result: false, error: 'Database error', details: error }))
         }  else {
           console.log(data)
@@ -213,12 +220,119 @@ router.put('/moodPassenger', (req, res) => {
           User.updateOne(
             { token: req.body.tokenDriver },
             { averageNote: data.averageNote }
-            ).then((data) => { 
-              return res.json({result: true, message: 'Notes mises à jour', report: data})
-              
-            }).catch(error => res.json({ result: false, error: 'Database error', details: error }))
+            ).then(() => {
+      
+              User.findOne({ token: req.body.tokenDriver }).then((data) => {
+                return res.json({ result: true, driver: data });
+            }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+           
+           }).catch(error => res.json({ result: false, error: 'Database error', details: error }))
         }
     }).catch(error => res.json({ result: false, error: 'Database error', details: error }))
+  });
+
+
+  router.put('/personalInfos', (req, res) => {
+
+    if (!(req.body.tokenPassenger && (req.body.lastname || req.body.firstname))) {
+      return res.json({ result: false, error: 'Missing or empty fields' });
+    }
+
+    const modificationCriteria2 = req.body.lastname ? { lastname: req.body.lastname } : { firstname: req.body.firstname };
+
+
+    const modificationCriteria = (req.body.lastname && req.body.firstname) ? { firstname: req.body.firstname, lastname: req.body.lastname } : modificationCriteria2;
+
+          User.updateOne(
+            { token: req.body.tokenPassenger },
+            modificationCriteria
+            ).then(() => { 
+              User.findOne({ token: req.body.tokenPassenger }).then((data) => {
+                return res.json({ result: true, passenger: data });
+              }).catch(error => res.json({ result: false, error: 'Database error', details: error }));
+              
+            }).catch(error => res.json({ result: false, error: 'Database error', details: error }))
+   
+  });
+
+
+  router.put("/favoriteAddresses", (req, res) => {
+
+    if (!(req.body.token && ((req.body.longitudeH && req.body.latitudeH) || (req.body.longitudeW && req.body.latitudeW)))) {
+      return res.json({ result: false, error: 'Missing or empty fields' });
+    }
+
+    if (!checkBody(req.body, [ "tripId", 'longitudeH', 'latitudeH'])) {
+      return res.json({ result: false, error: "Missing or empty fields" });
+    }
+    const fetchAddressFromCoordinatesBis = async () => {
+  
+      try {
+        const responseD = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.body.latitudeD},${req.body.longitudeD}&key=${googleApiKey}`
+        );
+        const dataD = await responseD.json();
+        // console.log("dataD", dataD);
+        if (dataD.status === "OK" && dataD.results.length > 0) {
+          const departureAddress = dataD.results[0].formatted_address;
+          console.log(departureAddress);
+          Trip.updateOne(
+            { _id: req.body.tripId },
+            {
+               departure: {
+                longitude: req.body.longitudeD,
+                latitude: req.body.latitudeD,
+                completeAddress: departureAddress,
+                },
+            }
+          ).then(() => {
+            Trip.findOne({ _id: req.body.tripId })
+            .then((data) => {
+              const fetchData = async () => {
+                try {
+                  const responseT = await axios.get(
+                    `https://maps.googleapis.com/maps/api/directions/json?origin=${data.departure.completeAddress}&destination=${data.arrival.completeAddress}&key=${googleApiKey}`
+                  );
+                  Trip.updateOne(
+                    { _id: req.body.tripId },
+                    {
+                      distance: responseT.data.routes[0].legs[0].distance.text,
+                      estimatedDuration: responseT.data.routes[0].legs[0].duration.text,
+                      estimatedDurationValue:responseT.data.routes[0].legs[0].duration.value,
+                      polyline:responseT.data.routes[0].overview_polyline.points,
+                    }
+                  ).then(() => {
+                    Trip.findOne({ _id: req.body.tripId })
+                    .then((data) => {
+                    return res.json({
+                    result: true,
+                    trip: data,
+                    });
+            })
+                  })
+                  console.log("API Duration:", responseT.data.routes[0].legs[0].duration.text);
+                  console.log("API Distance:", responseT.data.routes[0].legs[0].distance.text);
+                } catch (error) {
+                  console.error("Error fetching directions:", error);
+                }
+              };
+          
+              fetchData();
+              
+            })
+            .catch((error) =>
+              res.json({ result: false, error: "Database error1", details: error })
+            );
+            });
+        
+  
+        }
+      } catch (error) {
+          console.error("Erreur lors de la récupération de l'adresse:", error);
+        }
+    }
+            
+      fetchAddressFromCoordinatesBis();
   });
 
 module.exports = router;

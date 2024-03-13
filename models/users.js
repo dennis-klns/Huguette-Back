@@ -37,6 +37,7 @@ const userSchema = mongoose.Schema({
   address: addressSchema,
   emergency: emergencySchema,
   averageNote: [Number],
+  favoriteAddresses: {home: addressSchema, work: addressSchema},
   isBanned: Boolean,
 });
 //
