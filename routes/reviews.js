@@ -11,8 +11,12 @@ router.post('/', (req, res) => {
       res.json({ result: false, error: 'Missing or empty fields' });
       return;
     }  
+
+    console.log(req.body)
         const newReview = new Review({
             trip: req.body.tripId,
+            noteByPassenger: req.body.noteByPassenger,
+            commentByPassenger: req.body.commentByPassenger || undefined
         });
 
         newReview.save().then(newDoc => {
