@@ -98,7 +98,7 @@ router.post('/signIn', (req, res) => {
 });
 
 router.put('/moodPassenger', (req, res) => {
-  if (!(req.body.token && (req.body.mood || req.body.music || req.body.isAccompanied))) {
+  if (!checkBody(req.body, ['mood','music', 'isAccompanied', 'token'])) {
     return res.json({ result: false, error: 'Missing or empty fields' });
   }
 
