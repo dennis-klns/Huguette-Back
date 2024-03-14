@@ -91,7 +91,7 @@ router.post("/", (req, res) => {
                               /*cost: data.cost,*/ result: true,
                               trip: data,
                               });
-                      })
+                              })
                             })
                             console.log("API Duration:", responseT.data.routes[0].legs[0].duration.text);
                             console.log("API Distance:", responseT.data.routes[0].legs[0].distance.text);

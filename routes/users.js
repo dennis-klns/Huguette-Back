@@ -258,81 +258,70 @@ router.put('/moodPassenger', (req, res) => {
 
   router.put("/favoriteAddresses", (req, res) => {
 
-    if (!(req.body.token && ((req.body.longitudeH && req.body.latitudeH) || (req.body.longitudeW && req.body.latitudeW)))) {
-      return res.json({ result: false, error: 'Missing or empty fields' });
-    }
-
-    if (!checkBody(req.body, [ "tripId", 'longitudeH', 'latitudeH'])) {
+    if (!checkBody(req.body, [ "token", "longitudeH", "latitudeH", "longitudeW", "latitudeW" ])) {
       return res.json({ result: false, error: "Missing or empty fields" });
     }
+
     const fetchAddressFromCoordinatesBis = async () => {
   
       try {
-        const responseD = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.body.latitudeD},${req.body.longitudeD}&key=${googleApiKey}`
+        const responseH = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.body.latitudeH},${req.body.longitudeH}&key=${googleApiKey}`
         );
-        const dataD = await responseD.json();
-        // console.log("dataD", dataD);
-        if (dataD.status === "OK" && dataD.results.length > 0) {
-          const departureAddress = dataD.results[0].formatted_address;
-          console.log(departureAddress);
-          Trip.updateOne(
-            { _id: req.body.tripId },
+        const dataH = await responseH.json();
+        if (dataH.status === "OK" && dataH.results.length > 0) {
+          const homeAddress = dataH.results[0].formatted_address;
+          console.log(homeAddress);
+          User.updateOne(
+            { token: req.body.token },
             {
-               departure: {
-                longitude: req.body.longitudeD,
-                latitude: req.body.latitudeD,
-                completeAddress: departureAddress,
-                },
+              $set: {'home.longitude': req.body.longitudeH, 'home.latitude': req.body.latitudeH, 
+                'home.completeAddress': homeAddress,
+              }  
+            }
+          ).then(() => {});
+        }
+
+        const responseW = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.body.latitudeW},${req.body.longitudeW}&key=${googleApiKey}`
+        );
+        const dataW = await responseW.json();
+        if (dataW.status === "OK" && dataW.results.length > 0) {
+          const workAddress = dataW.results[0].formatted_address;
+          console.log(workAddress);
+          User.updateOne(
+            { token: req.body.token },
+            {
+              $set: {'work.longitude': req.body.longitudeW, 'work.latitude': req.body.latitudeW, 
+                'work.completeAddress': workAddress,
+              } 
+                  
             }
           ).then(() => {
-            Trip.findOne({ _id: req.body.tripId })
-            .then((data) => {
-              const fetchData = async () => {
-                try {
-                  const responseT = await axios.get(
-                    `https://maps.googleapis.com/maps/api/directions/json?origin=${data.departure.completeAddress}&destination=${data.arrival.completeAddress}&key=${googleApiKey}`
-                  );
-                  Trip.updateOne(
-                    { _id: req.body.tripId },
-                    {
-                      distance: responseT.data.routes[0].legs[0].distance.text,
-                      estimatedDuration: responseT.data.routes[0].legs[0].duration.text,
-                      estimatedDurationValue:responseT.data.routes[0].legs[0].duration.value,
-                      polyline:responseT.data.routes[0].overview_polyline.points,
-                    }
-                  ).then(() => {
-                    Trip.findOne({ _id: req.body.tripId })
-                    .then((data) => {
-                    return res.json({
-                    result: true,
-                    trip: data,
-                    });
+            User.findOne({ token: req.body.token })
+              .then((data) => {
+                console.log(data);
+                return res.json({
+                result: true,
+                home: data.home, work:data.work,
+                });
+              })
             })
-                  })
-                  console.log("API Duration:", responseT.data.routes[0].legs[0].duration.text);
-                  console.log("API Distance:", responseT.data.routes[0].legs[0].distance.text);
-                } catch (error) {
-                  console.error("Error fetching directions:", error);
-                }
-              };
-          
-              fetchData();
-              
-            })
-            .catch((error) =>
-              res.json({ result: false, error: "Database error1", details: error })
-            );
-            });
-        
-  
         }
       } catch (error) {
-          console.error("Erreur lors de la récupération de l'adresse:", error);
-        }
+        console.error("Erreur lors de la récupération de l'adresse:", error);
+      }
+
+
+
     }
-            
-      fetchAddressFromCoordinatesBis();
+    fetchAddressFromCoordinatesBis();
+  });
+
+  router.get('/favoriteAddresses/:token', function(req, res) {
+    User.findOne({token: req.params.token}).then(data => {
+        return res.json({ result: true, home: data.home, work: data.work});
+       });
   });
 
 module.exports = router;

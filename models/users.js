@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+const positionSchema = mongoose.Schema({
+  completeAddress: String,
+  latitude: Number,
+  longitude: Number,
+});
+
 const addressSchema = mongoose.Schema({
   street: String,
   city: String,
@@ -37,7 +43,8 @@ const userSchema = mongoose.Schema({
   address: addressSchema,
   emergency: emergencySchema,
   averageNote: [Number],
-  favoriteAddresses: {home: addressSchema, work: addressSchema},
+  home: positionSchema, 
+  work:positionSchema,
   isBanned: Boolean,
 });
 //
