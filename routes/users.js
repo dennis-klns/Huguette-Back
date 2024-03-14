@@ -101,6 +101,7 @@ router.put('/moodPassenger', (req, res) => {
   // if (!checkBody(req.body, ['mood','music', 'isAccompanied', 'token'])) {
   //   return res.json({ result: false, error: 'Missing or empty fields' });
   // }
+  console.log(req.body.isAccompanied, req.body.token, req.body.mood, req.body.music )
   if(!music) {
     return res.json({ result: false, error: 'music' });
   } else if(!token) {
