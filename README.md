@@ -82,6 +82,14 @@ CONNECTION_STRING='votre_chaine_de_connexion_mongodb'
 
 Remplacez votre_chaine_de_connexion_mongodb par votre propre URI de connexion MongoDB. Vous pouvez obtenir cette URI depuis votre compte MongoDB Atlas ou votre installation locale de MongoDB.
 
+Ajouter également une clé pour la gestion des photos avec Cloudinary. 
+Vous pouvez récuper la clé sur le lien suivant : https://cloudinary.com/ 
+Pui l'ajouter en dessous de votre connection string : 
+
+```sh
+CLOUDINARY_URL='votre_cléf_api_cloudinary'
+```
+
 Démarrer l'application
 
 Assurez-vous que toutes les dépendances sont installées (voir les instructions d'installation ci-dessus) et démarrez votre serveur avec :
