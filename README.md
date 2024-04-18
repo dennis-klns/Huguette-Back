@@ -14,7 +14,7 @@ Avant d'installer ce projet, vous devez vérifier si Node.js est installé sur v
 Pour vérifier si Node.js est installé, exécutez cette commande dans votre terminal :
 
 
-```sh
+```
 node -v
 ```
 
